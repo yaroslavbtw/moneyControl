@@ -11,6 +11,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/modals.css' %}" rel="stylesheet">
+
   </head>
   <body>
 
@@ -63,6 +64,8 @@
   </symbol>
 </svg>
 
+{#{% include "partials/_messages.html" %}#}
+
 
 <div class="modal modal-signin position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalSignin">
   <div class="modal-dialog" role="document">
@@ -75,10 +78,10 @@
 
       <div class="modal-body p-5 pt-0">
 
-        <form class="" method="post" action="{% url 'home' %}">
+        <form class="form_register" method="post" action="{% url 'register' %}">
             {% csrf_token %}
           <div class="form-floating mb-2">
-            <input type="text" class="form-control rounded-3" id="usernameField" placeholder="Username">
+            <input type="text" class="form-control rounded-3" id="usernameField" placeholder="Username" name="usernameField" value="{{ fieldValues.usernameField }}">
             <label for="usernameField">Username</label>
 
               <div id="usernameHelpBlock" class="form-text">
@@ -86,7 +89,7 @@
             </div>
 
           <div class="form-floating mb-2">
-            <input type="email" class="form-control rounded-3" id="emailField" placeholder="name@example.com">
+            <input type="email" class="form-control rounded-3" id="emailField" placeholder="name@example.com" name="emailField" value="{{ fieldValues.emailField }}">
             <label for="emailField">Email address</label>
           </div>
 
@@ -95,7 +98,7 @@
             </div>
 
           <div class="form-floating mb-2">
-            <input type="password" class="form-control rounded-3" id="passwordField" placeholder="Password">
+            <input type="password" class="form-control rounded-3" id="passwordField" name="passwordField" placeholder="Password">
             <label for="passwordField">Password</label>
           </div>
 
@@ -142,6 +145,10 @@
     </div>
   </div>
 </div>
+
+
+
     <script src="{% static 'js/register.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   </body>
 </html>

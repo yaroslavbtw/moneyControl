@@ -33,7 +33,10 @@
   <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
   <div class="navbar-nav">
     <div class="nav-item text-nowrap">
-      <a class="nav-link px-3" href="#">Sign out</a>
+        <form>
+            <a class="nav-link px-3" href="{% url 'logout' %}" role="button">Log out</a>
+        </form>
+
     </div>
   </div>
 </header>

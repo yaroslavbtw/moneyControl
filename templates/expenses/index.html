@@ -1,15 +1,21 @@
 {% extends 'expenses/base.html' %}
 
 {% block content %}
-    <h1>Expenses list</h1>
-    <ul class="list-group">
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-        <li class="list-group-item">Bought car</li>
-    </ul>
+    {% include 'partials/_messages.html' %}
+<div class="container">
+
+
+
+        <h1>Expenses list</h1>
+        <ul class="list-group">
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+            <li class="list-group-item">Bought car</li>
+        </ul>
+</div>
 {% endblock %}

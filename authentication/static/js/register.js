@@ -1,3 +1,5 @@
+
+
 const usernameField = document.querySelector("#usernameField");
 const helpBlockUsername = document.querySelector("#usernameHelpBlock");
 const emailField = document.querySelector("#emailField");
@@ -6,15 +8,17 @@ const toggleShowPassword = document.querySelector("#showPasswordToggle");
 const passwordField = document.querySelector("#passwordField");
 const helpBlockPassword = document.querySelector("#passwordHelpBlock");
 const signInButton = document.querySelector("#signInButton");
+const formReg = document.querySelector(".form_register");
 let usernameHelpBlockText = 'Your username must be 5-20 characters long, only contain letters and numbers.';
-let emailHelpBlockText = 'our mail should look like a template: name@example.com.';
+let emailHelpBlockText = 'Your mail should look like a template: name@example.com.';
+
+
 
 toggleShowPassword.addEventListener("click", (e)=>{
     if(toggleShowPassword.checked)
         passwordField.setAttribute("type", "text");
     else passwordField.setAttribute("type", "password");
 })
-
 usernameField.addEventListener("focus", (e)=> {
     helpBlockUsername.children[0].textContent = usernameHelpBlockText;
 })
@@ -51,16 +55,18 @@ usernameField.addEventListener("input", (e) => {
             usernameField.classList.add("is-invalid");
             usernameHelpBlockText = `${data.username_error}`
             helpBlockUsername.children[0].textContent = usernameHelpBlockText;
-            signInButton.disabled = true;
-        }
-        else {
+        } else {
             usernameField.classList.remove("is-invalid");
             usernameField.classList.add("is-valid");
             usernameHelpBlockText = 'This nickname is available.';
             helpBlockUsername.children[0].textContent = usernameHelpBlockText;
-            signInButton.removeAttribute("disabled");
         }
       });
+    }else{
+        usernameField.classList.remove("is-valid");
+        usernameField.classList.add("is-invalid");
+        usernameHelpBlockText = 'Your username must be 5-20 characters long, only contain letters and numbers.';
+        helpBlockUsername.children[0].textContent = usernameHelpBlockText;
     }
 })
 
@@ -82,16 +88,18 @@ emailField.addEventListener("input", (e) => {
             emailField.classList.add("is-invalid");
             emailHelpBlockText = `${data.email_error}`
             helpBlockEmail.children[0].textContent = emailHelpBlockText;
-            signInButton.disabled = true;
-        }
-        else {
+        } else {
             emailField.classList.remove("is-invalid");
             emailField.classList.add("is-valid");
             emailHelpBlockText = 'This email is available.';
             helpBlockEmail.children[0].textContent = emailHelpBlockText;
-            signInButton.removeAttribute("disabled");
         }
       });
+    }else {
+        emailField.classList.remove("is-valid");
+        emailField.classList.add("is-invalid");
+        emailHelpBlockText = 'Your mail should look like a template: name@example.com.';
+        helpBlockEmail.children[0].textContent = emailHelpBlockText;
     }
 })
 
@@ -102,18 +110,28 @@ passwordField.addEventListener("input", (e) => {
         passwordField.classList.remove("is-valid");
         passwordField.classList.add("is-invalid");
         helpBlockPassword.children[0].textContent = 'Your password must be 8-20 characters long.';
-        signInButton.disabled = true;
-    }
-    else {
+    } else {
         passwordField.classList.remove("is-invalid");
         passwordField.classList.add("is-valid");
         helpBlockPassword.children[0].textContent = 'This password is compliant.';
-        signInButton.removeAttribute("disabled");
     }
 })
 
 signInButton.addEventListener("click", (e)=>{
-    // if(emailField.classList.contains("is-invalid"))
-        // emailField.scrollIntoView({block: "center", behavior: "smooth"})
-    console.log("CLICKED KNOPKA!!");
+    e.preventDefault();
+    if(usernameField.value.length < 5){
+        usernameField.classList.add("is-invalid");
+        helpBlockUsername.children[0].textContent = usernameHelpBlockText;
+    }
+    if(emailField.value.length === 0) {
+        emailField.classList.add("is-invalid");
+        helpBlockEmail.children[0].textContent = emailHelpBlockText;
+    }
+    if(passwordField.value.length < 8) {
+        passwordField.classList.add("is-invalid");
+        helpBlockPassword.children[0].textContent = 'Your password must be 8-20 characters long.';
+    }
+    if(usernameField.classList.contains("is-valid") && emailField.classList.contains("is-valid")
+        && passwordField.classList.contains("is-valid"))
+        formReg.submit();
 })
