@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 import json
-import re
+
 from validate_email import validate_email
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from .utils import token_generator
+from .utils import confirm_token_generator
 
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -60,7 +60,7 @@ class RegistrationView(View):
                 domain = get_current_site(request).domain
 
                 uuid64 = urlsafe_base64_encode(force_bytes(user.pk))
-                link = reverse('activate', kwargs={'uuid64': uuid64, 'token': token_generator.make_token(user)})
+                link = reverse('activate', kwargs={'uuid64': uuid64, 'token': confirm_token_generator.make_token(user)})
                 activate_url = 'http://' + domain + link
 
                 send_mail('Django MoneyExpenses Registration',
@@ -82,7 +82,7 @@ class VerificationView(View):
             id = force_str(urlsafe_base64_decode(uuid64))
             user = User.objects.get(pk=id)
 
-            if not token_generator.check_token(user, token):
+            if not confirm_token_generator.check_token(user, token):
                 return redirect(reverse('login') + '?message=Account already activated')
 
             if user.is_active:
