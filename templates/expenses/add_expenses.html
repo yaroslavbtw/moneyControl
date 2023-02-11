@@ -1,0 +1,55 @@
+{% extends 'expenses/base.html' %}
+
+{% block content %}
+
+    <div class="container mt-4">
+    <h2>Add expenses</h2>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'expenses' %}">Expenses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add expenses</li>
+          </ol>
+        </nav>
+
+
+        <div class="card">
+            <div class="card-body">
+                {% include 'partials/_messages.html' %}
+                <form action="{% url 'add-expenses' %}" method="post">
+                    {% csrf_token %}
+                <div class="form-floating mb-2">
+                <div class="mb-3">
+                    <label for="amount">Amount</label>
+                    <input type="number" class="form-control rounded-3" name="amount" id="amount" value="{{ values.amount }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control rounded-3" name="description" id="description" value="{{ values.description }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="category">Category</label>
+                    <select name="category" class="form-control rounded-3" id="category">
+                        {% for cat in categories %}
+                            {% if cat.name != values.category %}
+                                <option name="category">{{ cat }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date of Expense</label>
+                    <input type="date" class="form-control rounded-3" name="date" id="date" value="{{ values.date | stringformat:"s"}}">
+                </div>
+                <button class="btn btn-lg rounded-3 btn-primary" type="submit" id="SaveButton">Save</button>
+{#                <input type="submit" value="Save" class="btn btn-primary">#}
+                </div>
+                </form>
+            </div>
+        </div>
+
+</div>
+{% endblock content %}

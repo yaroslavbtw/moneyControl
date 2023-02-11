@@ -68,7 +68,7 @@ class RegistrationView(View):
                           settings.EMAIL_HOST_USER,
                           [email])
 
-                return HttpResponse("<h1>YOUR ACCOUNT REGISTERED!</h1>")
+                return redirect('login')
             else:
                 messages.add_message(request, messages.ERROR, 'Account with this email registered already.')
         else:
@@ -83,18 +83,18 @@ class VerificationView(View):
             user = User.objects.get(pk=id)
 
             if not confirm_token_generator.check_token(user, token):
-                return redirect(reverse('login') + '?message=Account already activated')
+                return redirect('login' + '?message=Account already activated')
 
             if user.is_active:
-                return redirect(reverse('login'))
+                return redirect('login')
             user.is_active = True
             user.save()
 
-            return redirect(reverse('login'))
+            return redirect('login')
 
         except Exception as ex:
             pass
-        return redirect(reverse('login'))
+        return redirect('login')
 
 
 class LoginView(View):
@@ -112,7 +112,7 @@ class LoginView(View):
                 if user.is_active:
                     auth.login(request, user)
                     messages.success(request, f"Welcome, {user.username}. You are now logged in.")
-                    return render(request, template_name='expenses/index.html')
+                    return redirect('expenses')
                 messages.error(request, "Account is not activated. Please, check your email.")
                 return render(request, template_name='authentication/login.html')
             messages.error(request, "Username entered incorrectly or password does not match.")
@@ -125,7 +125,7 @@ class LogoutView(View):
     def get(self, request):
         auth.logout(request)
         messages.success(request, "You have been logged out.")
-        return redirect(reverse('login'))
+        return redirect('login')
 
 
 class ResetPasswordView(View):

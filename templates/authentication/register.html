@@ -78,7 +78,7 @@
 
       <div class="modal-body p-5 pt-0">
 
-        <form class="form_register" method="post" action="{% url 'register' %}">
+        <form class="" method="post" action="{% url 'register' %}">
             {% csrf_token %}
           <div class="form-floating mb-2">
             <input type="text" class="form-control rounded-3" id="usernameField" placeholder="Username" name="usernameField" value="{{ fieldValues.usernameField }}">
