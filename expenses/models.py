@@ -12,7 +12,7 @@ class Expenses(models.Model):
     category = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.category
+        return self.description
 
     class Meta:
         ordering = ['-date']

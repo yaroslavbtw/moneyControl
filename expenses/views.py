@@ -6,16 +6,23 @@ from django.http import HttpResponseForbidden
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-
+from django.core.paginator import Paginator
 
 @login_required()
 def index(request):
     user_expenses = Expenses.objects.filter(owner=request.user)
     user_preferences = get_object_or_404(UserPreference, user=request.user)
-    # user_preferences = UserPreference.objects.get(user=request.user)
+
+    paginator = Paginator(user_expenses, 4)
+    page_number = request.GET.get('page')
+    if page_number:
+        page_object = paginator.get_page(page_number)
+    else:
+        page_object = paginator.get_page(1)
     context = {
-        'user_expenses': user_expenses,
-        'currency': user_preferences.currency
+        'currency': user_preferences.currency,
+        'page_obj': page_object,
+        'page_obj_length': len(page_object.object_list)
     }
     return render(request, template_name='expenses/index.html', context=context)
 
