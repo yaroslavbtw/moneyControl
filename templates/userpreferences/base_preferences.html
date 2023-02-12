@@ -11,13 +11,13 @@
         <h4>Preferred currency</h4>
         {% include 'partials/_messages.html' %}
         <div class="input-group">
-          <select class="form-select" id="inputGroupSelect04" aria-label="Currency button" name="currency">
+          <select class="form-select rounded-3 mx-1" id="inputGroupSelect04" aria-label="Currency button" name="currency">
             <option selected>{% if current_currency %} {{ current_currency }} {% else %} Choose... {% endif %}</option>
               {% for element in currency_data %}
                   <option> {{ element.name }} - {{ element.value }}</option>
               {% endfor %}
           </select>
-            <button class="btn btn-outline-secondary" type="submit">Save</button>
+            <button class="btn btn-outline-secondary rounded-3" type="submit">Save</button>
         </div>
         <hr>
         </form>

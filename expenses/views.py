@@ -5,6 +5,7 @@ from .models import Category, Expenses
 from django.http import HttpResponseForbidden
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
 
 
 @login_required()
@@ -49,15 +50,18 @@ def add_expenses(request):
 @login_required()
 def edit_expanses(request, id):
     expense = get_object_or_404(Expenses, pk=id)
+
+    if request.user != expense.owner:
+        return HttpResponseForbidden()
+
     categories = Category.objects.all()
     context = {
         'values': expense,
         'categories': categories,
     }
+
     if request.method == 'GET':
-        if request.user != expense.owner:
-            return HttpResponseForbidden()
-        return render(request, template_name='expenses/expense-edit.html', context=context)
+        return render(request, template_name='expenses/edit-expense.html', context=context)
     if request.method == 'POST':
         amount = request.POST['amount']
         description = request.POST['description']
@@ -73,4 +77,16 @@ def edit_expanses(request, id):
             return redirect('expenses')
         else:
             messages.error(request, 'Not all fields are filled')
-            return render(request, template_name='expenses/expense-edit.html', context=context)
+            return render(request, template_name='expenses/edit-expense.html', context=context)
+
+
+@login_required()
+def delete_expenses(request, id):
+    expense = Expenses.objects.get(pk=id)
+
+    if request.user != expense.owner:
+        return HttpResponseForbidden()
+
+    expense.delete()
+    messages.success(request, 'Expense successfully deleted')
+    return redirect('expenses')

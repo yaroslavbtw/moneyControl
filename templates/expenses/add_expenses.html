@@ -1,19 +1,23 @@
 {% extends 'expenses/base.html' %}
 
 {% block content %}
+    <div class="container mt-4">
+        <h2>Add expense</h2>
+        <div class="row">
+            <div class="col-md-10 pt-3 rounded-3" style="background-color: #e7ecef;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'expenses' %}">Expenses</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Add expenses</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
 
     <div class="container mt-4">
-    <h2>Add expenses</h2>
 
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'expenses' %}">Expenses</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Add expenses</li>
-          </ol>
-        </nav>
-
-
-        <div class="card">
+        <div class="card rounded-3">
             <div class="card-body">
                 {% include 'partials/_messages.html' %}
                 <form action="{% url 'add-expenses' %}" method="post">
