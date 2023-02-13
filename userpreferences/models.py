@@ -12,7 +12,10 @@ class UserPreference(models.Model):
     currency = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return str(UserPreference.user) + 's' + 'preferences'
+        return self.user.username + "'s" + ' preferences'
+
+    class Meta:
+        verbose_name_plural = 'UserPreferences'
 
 
 @receiver(post_save, sender=User)
