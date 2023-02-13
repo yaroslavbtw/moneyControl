@@ -7,6 +7,7 @@ from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 @login_required()
 def index(request):
@@ -97,3 +98,21 @@ def delete_expenses(request, id):
     expense.delete()
     messages.success(request, 'Expense successfully deleted')
     return redirect('expenses')
+
+
+@login_required()
+def search_expense(request):
+    data = request.POST['search_text']
+    currency = get_object_or_404(UserPreference, user=request.user).currency
+    if len(data) > 0:
+        query_set = Expenses.objects.filter(Q(amount__icontains=data) & Q(owner=request.user)) | \
+                    Expenses.objects.filter(Q(date__icontains=data) & Q(owner=request.user)) | \
+                    Expenses.objects.filter(Q(description__icontains=data) & Q(owner=request.user)) | \
+                    Expenses.objects.filter(Q(category__icontains=data) & Q(owner=request.user))
+    else:
+        query_set = Expenses.objects.filter(owner=request.user)[:4]
+    context = {
+        'query_set': query_set,
+        'currency': currency
+    }
+    return render(request, template_name='expenses/search.html', context=context)
