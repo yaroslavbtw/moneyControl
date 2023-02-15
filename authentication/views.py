@@ -9,15 +9,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from .utils import confirm_token_generator
+from .utils import confirm_token_generator, reset_password_generator
 
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
-
+from django.contrib.auth import update_session_auth_hash
 
 from django.contrib import auth
-# Create your views here.
+
 
 
 class UsernameValidationView(View):
@@ -85,8 +85,9 @@ class VerificationView(View):
             if not confirm_token_generator.check_token(user, token):
                 return redirect('login' + '?message=Account already activated')
 
-            if user.is_active:
-                return redirect('login')
+            # if user.is_active:
+            #     return redirect('login')
+
             user.is_active = True
             user.save()
 
@@ -102,8 +103,8 @@ class LoginView(View):
         return render(request, template_name='authentication/login.html')
 
     def post(self, request):
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST['usernameField']
+        password = request.POST['passwordField']
 
         if username and password:
             user = auth.authenticate(username=username, password=password)
@@ -122,12 +123,98 @@ class LoginView(View):
 
 
 class LogoutView(View):
-    def get(self, request):
+    def post(self, request):
         auth.logout(request)
         messages.success(request, "You have been logged out.")
         return redirect('login')
 
 
-class ResetPasswordView(View):
+class RequestResetPasswordView(View):
+
     def get(self, request):
-        return render(request, template_name='authentication/reset-password.html')
+        return render(request, template_name='authentication/reset-password-link.html')
+
+    def post(self, request):
+        email = request.POST['emailField']
+
+        if not validate_email(email):
+            messages.error(request, 'Please supply a valid email')
+            return render(request, template_name='authentication/reset-password-link.html')
+        try:
+            user = User.objects.get(email=email)
+            user.is_active = False
+            user.profile.reset_password = True
+            user.save()
+
+            messages.add_message(request, messages.SUCCESS, "A link to reset your password has been sent to your email")
+
+            domain = get_current_site(request).domain
+
+            uuid64 = urlsafe_base64_encode(force_bytes(user.pk))
+            link = reverse('resetPasswordNewPassword', kwargs={'uuid64': uuid64,
+                                                               'token': reset_password_generator.make_token(user)})
+            reset_url = 'http://' + domain + link
+
+            send_mail('Django MoneyExpenses Reset password',
+                      f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
+                      settings.EMAIL_HOST_USER,
+                      [email])
+        except User.DoesNotExist:
+            messages.error(request, 'User with this email does not exist')
+            return render(request, template_name='authentication/reset-password-link.html')
+
+        return render(request, 'authentication/reset-password-link.html', context={'fieldValues': request.POST})
+
+
+class ResetPasswordView(View):
+
+    def get(self, request, uuid64, token):
+        try:
+            id = force_str(urlsafe_base64_decode(uuid64))
+            user = User.objects.get(pk=id)
+
+        except User.DoesNotExist as e:
+            messages.error(request, str(e))
+            user = None
+
+        if user is not None and reset_password_generator.check_token(user, token):
+            context = {
+                'uuid64': uuid64,
+                'token': token
+            }
+            return render(request, template_name='authentication/reset-password-setPassword.html', context=context)
+
+        return redirect('login')
+
+    def post(self, request, uuid64, token):
+        try:
+            id = force_str(urlsafe_base64_decode(uuid64))
+            user = User.objects.get(pk=id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+            messages.add_message(request, messages.WARNING, str(e))
+            user = None
+
+        if user is not None and reset_password_generator.check_token(user, token):
+
+            password = request.POST['passwordField']
+            repeatPassword = request.POST['repeatPasswordField']
+
+            if password == repeatPassword:
+                user.set_password(password)
+                user.profile.reset_password = False
+                user.is_active = True
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password reset successfully.')
+                return redirect('login')
+            else:
+                messages.error(request, 'Passwords mismatch')
+                context = {
+                    'uuid64': uuid64,
+                    'token': token
+                }
+                return render(request, template_name='authentication/reset-password-link.html', context=context)
+        else:
+            messages.error(request, 'Not valid password')
+            return render(request, template_name='authentication/reset-password-link.html')
+

@@ -1,0 +1,91 @@
+{% extends 'expenses/base.html' %}
+
+{% block content %}
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content rounded-3">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete of income</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this income?
+          </div>
+          <div class="modal-footer">
+              <form action="{% url 'delete-incomes' values.pk %}" method="post">
+                  {% csrf_token %}
+                    <button type="reset" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary rounded-3">Delete income</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-4">
+        <h2>Edit income</h2>
+        <div class="row">
+            <div class="col-md-10 pt-3 rounded-3" style="background-color: #e7ecef;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'incomes' %}">Incomes</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Incomes</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="col-md-2 pt-2">
+                        <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger rounded-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Delete income
+                    </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+
+        <div class="card rounded-3">
+            <div class="card-body">
+                {% include 'partials/_messages.html' %}
+                <form action="{% url 'edit-incomes' values.pk %}" method="post">
+                    {% csrf_token %}
+                <div class="form-floating mb-2">
+                <div class="mb-3">
+                    <label for="amount">Amount</label>
+                    <input type="number" class="form-control rounded-3" name="amount" id="amount" value="{{ values.amount }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control rounded-3" name="description" id="description" value="{{ values.description }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="source">Source</label>
+                    <select name="source" class="form-control rounded-3" id="source">
+                        <option selected name="source"> {{ values.source }}</option>
+                        {% for source in sources %}
+                            {% if source.name != values.source %}
+                                <option name="source">{{ source }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date of Income</label>
+                    <input type="date" class="form-control rounded-3" name="date" id="date" value="{{ values.date | stringformat:"s"}}">
+                </div>
+                <button class="btn btn-lg rounded-3 btn-primary" type="submit" id="SaveButton">Save</button>
+{#                <input type="submit" value="Save" class="btn btn-primary">#}
+                </div>
+                </form>
+            </div>
+        </div>
+
+</div>
+{% endblock content %}

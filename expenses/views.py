@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
 
+
 @login_required()
 def index(request):
     user_expenses = Expenses.objects.filter(owner=request.user)
@@ -69,7 +70,7 @@ def edit_expanses(request, id):
     }
 
     if request.method == 'GET':
-        return render(request, template_name='expenses/edit-expense.html', context=context)
+        return render(request, template_name='expenses/edit_expense.html', context=context)
     if request.method == 'POST':
         amount = request.POST['amount']
         description = request.POST['description']
@@ -85,7 +86,7 @@ def edit_expanses(request, id):
             return redirect('expenses')
         else:
             messages.error(request, 'Not all fields are filled')
-            return render(request, template_name='expenses/edit-expense.html', context=context)
+            return render(request, template_name='expenses/edit_expense.html', context=context)
 
 
 @login_required()

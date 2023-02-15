@@ -1,58 +1,107 @@
+{#{% extends 'authentication/base_auth.html' %}#}
+{#{% load static %}#}
+{##}
+{##}
+{#{% block content %}#}
+{#<div class="row">#}
+{#  <div class="col-md-4"></div>#}
+{#  <div class="col-md-4">#}
+{#    <div class="card mt-5" style="border-radius: 0.5rem">#}
+{##}
+{#      <div class="card-body">#}
+{#        <div class="card-title py-3">#}
+{#          <h4>Login to your account</h4>#}
+{#        </div>#}
+{#        <form action="{% url 'login' %}" method="post">#}
+{#          {% csrf_token %}#}
+{##}
+{#          {% include 'partials/_messages.html' %}#}
+{##}
+{#          <div class="mb-3">#}
+{#            <input#}
+{#              type="text"#}
+{#              name="username"#}
+{#              placeholder="username"#}
+{#              id="usernameField"#}
+{#              value="{{fieldValues.username}}"#}
+{#              class="form-control form-control-sm"#}
+{#            />#}
+{#          </div>#}
+{##}
+{#          <div class="mb-3">#}
+{#            <input#}
+{#              type="password"#}
+{#              name="password"#}
+{#              placeholder="Password"#}
+{#              class="form-control form-control-sm"#}
+{#              id="passwordField"#}
+{#            />#}
+{#            <small id="toggleShowPassword" class="float-end py-3">SHOW</small>#}
+{##}
+{##}
+{#          <input type="submit" id="submitLogin" value="Log in" class="btn btn-primary btn-block"#}
+{#                 data-bs-toggle="modal" data-bs-target="#exampleModal"/>#}
+{#          </div>#}
+{#        </form>#}
+{##}
+{#      </div>#}
+{##}
+{#      </div>#}
+{#    </div>#}
+{##}
+{#  <div class="col-md-4"></div>#}
+{#</div>#}
+{##}
+{##}
+{#<script src="{% static 'js/login.js' %}"></script>#}
+{##}
+{#{% endblock content %}#}
+
 {% extends 'authentication/base_auth.html' %}
 {% load static %}
 
+{% block title %}
+    Money Expenses | Sign in
+{% endblock title %}
+
+{% block title_form %}
+    Sign in for free
+{% endblock title_form %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <div class="card mt-5" style="border-radius: 0.5rem">
+<form class="" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+          <div class="form-floating mb-2">
+            <input type="text" class="form-control rounded-3" id="usernameField" placeholder="Username" name="usernameField" value="{{ fieldValues.username }}">
+            <label for="usernameField">Username</label>
 
-      <div class="card-body">
-        <div class="card-title py-3">
-          <h4>Login to your account</h4>
-        </div>
-        <form action="{% url 'login' %}" method="post">
-          {% csrf_token %}
+              <div id="usernameHelpBlock" class="form-text">
+                <p></p>
+            </div>
 
-          {% include 'partials/_messages.html' %}
-
-          <div class="mb-3">
-            <input
-              type="text"
-              name="username"
-              placeholder="username"
-              id="usernameField"
-              value="{{fieldValues.username}}"
-              class="form-control form-control-sm"
-            />
+          <div class="form-floating mb-2">
+            <input type="password" class="form-control rounded-3" id="passwordField" placeholder="Password" name="passwordField">
+            <label for="passwordField">Password</label>
           </div>
 
-          <div class="mb-3">
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              class="form-control form-control-sm"
-              id="passwordField"
-            />
-            <small id="toggleShowPassword" class="float-end py-3">SHOW</small>
+            <div id="passwordHelpBlock" class="form-text">
+                <p></p>
+            </div>
 
+            <div class="my-3 mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="showPasswordToggle">
+                <label class="form-check-label" for="showPasswordToggle">Check me out</label>
+            </div>
 
-          <input type="submit" id="submitLogin" value="Log in" class="btn btn-primary btn-block"
-                 data-bs-toggle="modal" data-bs-target="#exampleModal"/>
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group w-100" role="group" aria-label="Basic example">
+                    <button class="w-90 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" id="signInButton">Sig in</button>
+                </div>
+
+            </div>
+              <p class="w-100 text-muted lead mb-1">Dont have an account? <a href="{% url 'register' %}">Sign up</a></p>
+              <p class="w-100 text-muted lead">Forgot password? <a href="{% url 'resetPasswordGetLink' %}">Reset password</a></p>
           </div>
-        </form>
-
-      </div>
-
-      </div>
-    </div>
-
-  <div class="col-md-4"></div>
-</div>
-
-
-<script src="{% static 'js/login.js' %}"></script>
-
+</form>
+    <script src="{% static 'js/login.js' %}"></script>
 {% endblock content %}
