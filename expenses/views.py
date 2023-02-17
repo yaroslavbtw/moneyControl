@@ -22,6 +22,7 @@ def index(request):
     else:
         page_object = paginator.get_page(1)
     context = {
+        'user': request.user,
         'currency': user_preferences.currency,
         'page_obj': page_object,
         'page_obj_length': len(page_object.object_list)
@@ -33,6 +34,7 @@ def index(request):
 def add_expenses(request):
     categories = Category.objects.all()
     context = {
+        'user': request.user,
         'categories': categories,
         'values': request.POST
     }
@@ -65,6 +67,7 @@ def edit_expanses(request, id):
 
     categories = Category.objects.all()
     context = {
+        'user': request.user,
         'values': expense,
         'categories': categories,
     }
@@ -113,6 +116,7 @@ def search_expense(request):
     else:
         query_set = Expenses.objects.filter(owner=request.user)[:4]
     context = {
+        'user': request.user,
         'query_set': query_set,
         'currency': currency
     }

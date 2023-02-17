@@ -22,6 +22,7 @@ def index(request):
     else:
         page_object = paginator.get_page(1)
     context = {
+        'user': request.user,
         'currency': user_preferences.currency,
         'page_obj': page_object,
         'page_obj_length': len(page_object.object_list)
@@ -33,6 +34,7 @@ def index(request):
 def add_incomes(request):
     source = Source.objects.all()
     context = {
+        'user': request.user,
         'sources': source,
         'values': request.POST
     }
@@ -65,6 +67,7 @@ def edit_incomes(request, id):
 
     sources = Source.objects.all()
     context = {
+        'user': request.user,
         'values': income,
         'sources': sources,
     }
@@ -113,6 +116,7 @@ def search_incomes(request):
     else:
         query_set = Incomes.objects.filter(owner=request.user)[:4]
     context = {
+        'user': request.user,
         'query_set': query_set,
         'currency': currency
     }

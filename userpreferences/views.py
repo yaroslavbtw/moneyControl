@@ -19,11 +19,13 @@ def preferences(request):
 
     if request.method == 'GET':
         return render(request, template_name='userpreferences/base_preferences.html',
-                      context={'currency_data': currency_data, 'current_currency': user_preferences.currency})
+                      context={'user': request.user, 'currency_data': currency_data,
+                               'current_currency': user_preferences.currency})
     else:
         currency = request.POST['currency']
         user_preferences.currency = currency
         user_preferences.save()
         messages.success(request, "Changes saved")
         return render(request, template_name='userpreferences/base_preferences.html',
-                      context={'currency_data': currency_data, 'current_currency': user_preferences.currency})
+                      context={'user': request.user, 'currency_data': currency_data,
+                               'current_currency': user_preferences.currency})

@@ -30,11 +30,17 @@
   <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
+{#    <div class="navbar-nav">#}
+{#        <div class="nav-item">#}
+{#    <span class="nav-link">Test</span>#}
+{#        </div>#}
+{#    </div>#}
 {#  <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">#}
   <div class="navbar-nav">
     <div class="nav-item">
-        <form action="{% url 'logout' %}" method="post">
+        <form class="justify-content-end" action="{% url 'logout' %}" method="post">
             {% csrf_token %}
+            <span class="navbar-text col-lg-2 me-0 px-3 fs-6 text-nowrap" title="Username (email)">{{ user.username }} ({{ user.email }})</span>
             <button class="navbar-brand me-0 px-3 fs-6 border-0" type="submit">Log out</button>
         </form>
 

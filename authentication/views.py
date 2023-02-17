@@ -19,7 +19,6 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib import auth
 
 
-
 class UsernameValidationView(View):
     def post(self, request):
         username = json.loads(request.body)['username']
@@ -58,7 +57,6 @@ class RegistrationView(View):
                 messages.add_message(request, messages.SUCCESS, "Your account registered!")
 
                 domain = get_current_site(request).domain
-
                 uuid64 = urlsafe_base64_encode(force_bytes(user.pk))
                 link = reverse('activate', kwargs={'uuid64': uuid64, 'token': confirm_token_generator.make_token(user)})
                 activate_url = 'http://' + domain + link
@@ -93,9 +91,9 @@ class VerificationView(View):
 
             return redirect('login')
 
-        except Exception as ex:
-            pass
-        return redirect('login')
+        except (DjangoUnicodeDecodeError, User.DoesNotExist) as e:
+            messages.error(request, str(e))
+            return redirect('login')
 
 
 class LoginView(View):
