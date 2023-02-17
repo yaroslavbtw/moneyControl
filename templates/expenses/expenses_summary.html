@@ -1,0 +1,53 @@
+{% extends 'expenses/base.html' %}
+{% load static %}
+
+{% block title %}
+    My Expenses | Expenses Summary
+{% endblock title %}
+
+{% block content %}
+
+
+    <div class="container mt-4">
+        <h2>Expenses Summary</h2>
+        <div class="row">
+            <div class="col-md-10 pt-3 rounded-3" style="background-color: #e7ecef;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'expenses' %}">My expenses</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Expenses Summary</li>
+                    </ol>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+          const ctx = document.getElementById('myChart');
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+              datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+    </script>
+
+{% endblock content %}

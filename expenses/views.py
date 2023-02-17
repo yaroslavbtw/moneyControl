@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Category, Expenses
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
+import datetime
 
 
 @login_required()
@@ -121,3 +122,34 @@ def search_expense(request):
         'currency': currency
     }
     return render(request, template_name='expenses/search.html', context=context)
+
+
+@login_required()
+def expenses_summary(request):
+    return render(request, template_name='expenses/expenses_summary.html')
+
+
+@login_required()
+def expenses_category_summary(request):
+    today = datetime.datetime.today()
+    six_month_ago = today - datetime.timedelta(days=30*6)
+    expenses = Expenses.objects.filter(date__gte=six_month_ago, date__lte=today, owner=request.user)
+
+    final_rep = {}
+
+    def get_category(exp):
+        return exp.category
+
+    def get_expense_category_amount(cat):
+        amount = 0
+        query_set = expenses.filter(category=cat)
+        for exp in query_set:
+            amount += exp.amount
+        return amount
+
+    category_list = list(set(map(get_category, expenses)))
+    for expense in expenses:
+        for category in category_list:
+            final_rep[category] = get_expense_category_amount(category)
+
+    return JsonResponse({'expense_category_data': final_rep}, safe=False)
