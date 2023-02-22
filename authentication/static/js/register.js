@@ -7,7 +7,7 @@ const helpBlockEmail = document.querySelector("#emailHelpBlock");
 const toggleShowPassword = document.querySelector("#showPasswordToggle");
 const passwordField = document.querySelector("#passwordField");
 const helpBlockPassword = document.querySelector("#passwordHelpBlock");
-const signInButton = document.querySelector("#signInButton");
+const signUpButton = document.querySelector("#signUpButton");
 const formReg = document.querySelector(".form_register");
 let usernameHelpBlockText = 'Your username must be 5-20 characters long, only contain letters and numbers.';
 let emailHelpBlockText = 'Your mail should look like a template: name@example.com.';
@@ -117,7 +117,7 @@ passwordField.addEventListener("input", (e) => {
     }
 })
 
-signInButton.addEventListener("click", (e)=>{
+signUpButton.addEventListener("click", (e)=>{
     e.preventDefault();
     if(usernameField.value.length < 5){
         usernameField.classList.add("is-invalid");
