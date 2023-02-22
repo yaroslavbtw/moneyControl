@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Incomes, Source
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
+import datetime
 
 
 @login_required()
@@ -121,3 +122,34 @@ def search_incomes(request):
         'currency': currency
     }
     return render(request, template_name='incomes/search.html', context=context)
+
+
+@login_required()
+def incomes_summary(request):
+    return render(request, template_name='incomes/incomes_summary.html')
+
+
+@login_required()
+def incomes_category_summary(request):
+    today = datetime.datetime.today()
+    six_month_ago = today - datetime.timedelta(days=30*6)
+    incomes = Incomes.objects.filter(date__gte=six_month_ago, date__lte=today, owner=request.user)
+
+    final_rep = {}
+
+    def get_source(inc):
+        return inc.source
+
+    def get_incomes_source_amount(src):
+        amount = 0
+        query_set = incomes.filter(source=src)
+        for income in query_set:
+            amount += income.amount
+        return amount
+
+    source_list = list(set(map(get_source, incomes)))
+    for income in incomes:
+        for source in source_list:
+            final_rep[source] = get_incomes_source_amount(source)
+
+    return JsonResponse({'category_data': final_rep, 'nameChart': 'Incomes'}, safe=False)

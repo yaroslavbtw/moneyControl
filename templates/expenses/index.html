@@ -2,6 +2,27 @@
 {% load static %}
 {% block content %}
 
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Export table of expenses</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p>Choose the export type:</p>
+                <a href="{% url 'expenses-export-csv' %}" class="btn btn-primary rounded-3">CSV</a>
+                <a href="#" class="btn btn-primary rounded-3">PDF</a>
+                <a href="{% url 'expenses-export-excel' %}" class="btn btn-primary rounded-3">EXCEL</a>
+          </div>
+          <div class="modal-footer">
+
+                <a class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Close</a>
+            </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container mt-4">
         <h2>My expenses</h2>
         <div class="row">
@@ -22,9 +43,15 @@
 
     <div class="container mt-4">
     {% include 'partials/_messages.html' %}
-        <div class="container">
+        <div class="container pb-3">
             <div class="row">
-                <div class="col-md-9"></div>
+                <div class="col-md-9">
+{#                    <a href="{% url 'add-expenses' %}" class="btn btn-primary rounded-3">Add expense</a>#}
+                        <button type="button" class="btn btn-primary rounded-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                              Export table
+                        </button>
+                </div>
+
                 <div class="col justify-content-end mb-1">
                     <div class="input-group">
                         <label for="searchField" ></label>
@@ -35,7 +62,7 @@
             </div>
         </div>
         {% if page_obj_length %}
-            <table class="table table-striped table-hover" id="expensesTable">
+            <table class="table table-striped table-hover pt-2" id="expensesTable">
                 <thead>
                     <tr>
                         <th>Amount ({{ currency }})</th>

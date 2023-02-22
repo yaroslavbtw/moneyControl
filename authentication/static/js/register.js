@@ -1,5 +1,3 @@
-
-
 const usernameField = document.querySelector("#usernameField");
 const helpBlockUsername = document.querySelector("#usernameHelpBlock");
 const emailField = document.querySelector("#emailField");

@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Category, Expenses
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
 import datetime
+import csv
+import xlwt
 
 
 @login_required()
@@ -152,4 +154,52 @@ def expenses_category_summary(request):
         for category in category_list:
             final_rep[category] = get_expense_category_amount(category)
 
-    return JsonResponse({'expense_category_data': final_rep}, safe=False)
+    return JsonResponse({'category_data': final_rep, 'nameChart': 'Expenses'}, safe=False)
+
+
+@login_required()
+def export_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="expenses_' + str(datetime.datetime.now()) + '.csv"'
+    try:
+        currency = get_object_or_404(UserPreference, user=request.user).currency
+    except UserPreference.DoesNotExist:
+        currency = ''
+    writer = csv.writer(response)
+    writer.writerow(['Amount(' + currency + ')', 'Category', 'Description', 'Date'])
+
+    expenses = Expenses.objects.filter(owner=request.user)
+    for expense in expenses:
+        writer.writerow([expense.amount, expense.category, expense.description, expense.date])
+    return response
+
+
+@login_required()
+def export_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="expenses_' + str(datetime.datetime.now()) + '.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Expenses')
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    try:
+        currency = get_object_or_404(UserPreference, user=request.user).currency
+    except UserPreference.DoesNotExist:
+        currency = ''
+
+    columns = ['Amount(' + currency + ')', 'Category', 'Description', 'Date']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    font_style = xlwt.XFStyle()
+    rows = Expenses.objects.filter(owner=request.user).values_list('amount', 'category', 'description', 'date')
+
+    for row in rows:
+        row_num += 1
+
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+    wb.save(response)
+    return response

@@ -1,7 +1,8 @@
 const ctx = document.getElementById('myChart');
 
-const renderChart = (data_expense) =>{
-        const category_data = data_expense.expense_category_data;
+const renderChart = (data_chart) =>{
+        const name = data_chart.nameChart
+        const category_data = data_chart.category_data;
         const [labels, data] = [Object.keys(category_data), Object.values(category_data)];
         ctx.style.height = '400px';
         ctx.style.width = '400px';
@@ -11,7 +12,7 @@ const renderChart = (data_expense) =>{
         data: {
           labels: labels,
           datasets: [{
-            label: 'Last 6 month expenses',
+            label: `Last 6 month ${name}`,
             data: data,
             borderWidth: 1
           }]
@@ -20,16 +21,20 @@ const renderChart = (data_expense) =>{
             maintainAspectRatio: false,
             title: {
                 display: true,
-                text: "Expenses per category",
+                text: `${name} per category`,
             },
         }
         });
 }
 
 const getChartData=()=>{
+    let url = '';
+    if(ctx.classList.contains('chart_expense'))
+        url = "/expenses/expenses_category_summary/";
+    else url = "/incomes/incomes_source_summary/";
     $.ajax({
            type: "GET",
-           url: "/expenses/expenses_category_summary/",
+           url: url,
            success: renderChart,
            dataType: 'json',
        });

@@ -2,20 +2,20 @@
 {% load static %}
 
 {% block title %}
-    My Expenses | Expenses Summary
+    My Expenses | Incomes Summary
 {% endblock title %}
 
 {% block content %}
 
 
     <div class="container mt-4">
-        <h2>Expenses Summary</h2>
+        <h2>Incomes Summary</h2>
         <div class="row">
             <div class="col-md-10 pt-3 rounded-3" style="background-color: #e7ecef;">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'expenses' %}">My expenses</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Expenses Summary</li>
+                        <li class="breadcrumb-item active" aria-current="page">Incomes Summary</li>
                     </ol>
                 </nav>
             </div>
@@ -24,7 +24,7 @@
     </div>
 
     <div>
-        <canvas id="myChart" class="chart_expense"></canvas>
+        <canvas id="myChart" class="chart_incomes"></canvas>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="{% static 'js/summary.js' %}"></script>
