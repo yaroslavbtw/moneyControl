@@ -12,4 +12,5 @@ urlpatterns = [
     path('expenses-summary/', expenses_summary, name='expenses_summary'),
     path('export-csv/', export_csv, name='expenses-export-csv'),
     path('export-excel/', export_excel, name='expenses-export-excel'),
+    path('export-pdf/', export_pdf, name='expenses-export-pdf'),
 ]

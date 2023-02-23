@@ -8,6 +8,12 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
+
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+from django.db.models import Sum
+
 import datetime
 import csv
 import xlwt
@@ -202,4 +208,28 @@ def export_excel(request):
         for col_num in range(len(row)):
             ws.write(row_num, col_num, str(row[col_num]), font_style)
     wb.save(response)
+    return response
+
+
+@login_required()
+def export_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; attachment; filename="expenses_' + str(datetime.datetime.now()) + '.pdf"'
+    response['Content-Transfer-Encoding'] = 'binary'
+
+    expenses = Expenses.objects.filter(owner=request.user)
+    sum_of_expense = expenses.aggregate(Sum('amount'))
+
+    html_string = render_to_string('expenses/pdf-output.html', {'expenses': expenses, 'total': sum_of_expense['amount__sum']})
+    html = HTML(string=html_string)
+
+    result = html.write_pdf()
+
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+
+        output = open(output.name, 'rb')
+        response.write(output.read())
+
     return response

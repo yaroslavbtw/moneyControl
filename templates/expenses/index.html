@@ -12,7 +12,7 @@
           <div class="modal-body">
               <p>Choose the export type:</p>
                 <a href="{% url 'expenses-export-csv' %}" class="btn btn-primary rounded-3">CSV</a>
-                <a href="#" class="btn btn-primary rounded-3">PDF</a>
+                <a href="{% url 'expenses-export-pdf' %}" class="btn btn-primary rounded-3">PDF</a>
                 <a href="{% url 'expenses-export-excel' %}" class="btn btn-primary rounded-3">EXCEL</a>
           </div>
           <div class="modal-footer">
