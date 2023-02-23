@@ -23,10 +23,106 @@
         </div>
     </div>
 
-    <div>
-        <canvas id="myChart" class="chart_expense"></canvas>
+
+    <section id="dashboard" class="py-4">
+      <div class="container">
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3 rounded-2" style="max-width: 18rem;">
+                      <div class="card-header">TODAY <h5 class="float-right"><span class="badge bg-light rounded-2">5</span></h5> </div>
+                      <div class="card-body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
+                          <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                          <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                        </svg>
+                        <p class="card-text">3423 BLR</p>
+                        </div>
+                      </div>
+            </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3 rounded-2" style="max-width: 18rem;">
+              <div class="card-header">THIS WEEK <h5 class="float-right"><span class="badge bg-light rounded-2">51</span></h5> </div>
+              <div class="card-body">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
+                  <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                  <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                </svg>
+                <p class="card-text">3423 BLR</p>  </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3 rounded-2" style="max-width: 18rem;">
+              <div class="card-header">THIS MONTH <h5 class="float-right"><span class="badge bg-light rounded-2">51</span></h5> </div>
+              <div class="card-body">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
+                  <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                  <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                </svg>
+                <p class="card-text">3423 BLR</p>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+        <div class="card text-white bg-info mb-3 rounded-2" style="max-width: 18rem;">
+          <div class="card-header">THIS YEAR <h5 class="float-right"><span class="badge bg-light rounded-2">235</span></h5> </div>
+          <div class="card-body">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
+              <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+              <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+            </svg>
+            <p class="card-text">3423 BLR</p>
+          </div>
+        </div>
+        </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card rounded-2">
+                <canvas id="myChart" class="chart_expense"></canvas>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card rounded-2">
+                <canvas id="myChart2" class="chart_expense2"></canvas>
+                <script>
+                      const chr = document.getElementById('myChart2');
+                        chr.style.height = '300px';
+                        chr.style.width = '200px';
+                      new Chart(chr, {
+                        type: 'doughnut',
+                        data: {
+                          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                          datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderWidth: 1
+                          }]
+                        },
+                        options: {
+                                maintainAspectRatio: false,
+                                title: {
+                                    display: true,
+                                    text: `Expenses per category`,
+                                },
+                            }
+                      });
+                </script>
+            </div>
+        </div>
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="{% static 'js/summary.js' %}"></script>
+
 
 {% endblock content %}

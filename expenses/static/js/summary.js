@@ -4,8 +4,8 @@ const renderChart = (data_chart) =>{
         const name = data_chart.nameChart
         const category_data = data_chart.category_data;
         const [labels, data] = [Object.keys(category_data), Object.values(category_data)];
-        ctx.style.height = '400px';
-        ctx.style.width = '400px';
+        ctx.style.height = '300px';
+        ctx.style.width = '200px';
 
         new Chart(ctx, {
         type: 'doughnut',
