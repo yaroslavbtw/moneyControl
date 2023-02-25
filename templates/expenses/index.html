@@ -78,8 +78,9 @@
                             <td>{{ expense.category }}</td>
                             <td>{{ expense.description }}</td>
                             <td>{{ expense.date }}</td>
-                            <td><a href="{% url 'edit-expenses' expense.id %}" class="btn btn-secondary btn-sm rounded-3">Edit</a></td>
-                            <td><button type="button" class="btn btn-danger btn-sm rounded-3" data-bs-toggle="modal" data-bs-target="#exampleModal2">Delete</button></td>
+                            <td><a href="{% url 'edit-expenses' expense.id %}" class="btn btn-secondary btn-sm rounded-3">Edit</a>
+                            <button type="button" class="btn btn-danger btn-sm rounded-3" data-bs-toggle="modal" data-bs-target="#exampleModal2">Delete</button></td>
+{#                            <td></td>#}
                         </tr>
 
                         <!-- Modal -->
@@ -87,7 +88,7 @@
                               <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content rounded-3">
                                   <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm action</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <div class="modal-body">
