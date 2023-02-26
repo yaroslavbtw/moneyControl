@@ -87,7 +87,23 @@
             </div>
         {% endif %}
     </div>
+    <div class="container">
+    <div class="row mt-1">
+        <div class="col">
+            <div class="card rounded-2">
+                <canvas id="myChart" class="chart_incomes_index"></canvas>
+            </div>
+        </div>
 
+        <div class="col">
+            <div class="card rounded-2">
+                <canvas id="cmchart" class="chart_incomes_index"></canvas>
+
+            </div>
+        </div>
+    </div>
+        </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="{% static 'js/searchEngineIncomes.js' %}"></script>
+    <script src="{% static 'js/stats_index.js' %}"></script>
 {% endblock %}

@@ -29,51 +29,51 @@
         <div class="row mx-0">
             <div class="col-md-3">
                 <div class="card text-white mb-3 rounded-2" style="max-width: 18rem; background-color: #427de6">
-                      <div class="card-header">TODAY <h5 class="float-end"><span class="badge bg-light rounded-2">5</span></h5> </div>
+                      <div class="card-header">TODAY <h5 class="float-end"><span class="badge bg-light rounded-2">{{ today.count }}</span></h5> </div>
                       <div class="card-body">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
                           <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
                           <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
                         </svg>
-                        <p class="card-text">3423 BLR</p>
+                        <p class="card-text">{{ today.amount }} {{ currency }}</p>
                         </div>
                       </div>
             </div>
 
         <div class="col-md-3">
             <div class="card text-white mb-3 rounded-2" style="max-width: 18rem; background-color: #373a3c">
-              <div class="card-header">THIS WEEK <h5 class="float-end"><span class="badge bg-light rounded-2">51</span></h5> </div>
+              <div class="card-header">THIS WEEK <h5 class="float-end"><span class="badge bg-light rounded-2">{{ this_week.count }}</span></h5> </div>
               <div class="card-body">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
                   <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
                   <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
                 </svg>
-                <p class="card-text">3423 BLR</p>  </div>
+                <p class="card-text">{{ this_week.amount }} {{ currency }}</p>  </div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card text-white mb-3 rounded-2" style="max-width: 18rem; background-color: #02b273">
-              <div class="card-header">THIS MONTH <h5 class="float-end"><span class="badge bg-light rounded-2">51</span></h5> </div>
+              <div class="card-header">THIS MONTH <h5 class="float-end"><span class="badge bg-light rounded-2">{{ this_month.count }}</span></h5> </div>
               <div class="card-body">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
                   <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
                   <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
                 </svg>
-                <p class="card-text">3423 BLR</p>
+                <p class="card-text">{{ this_month.amount }} {{ currency }}</p>
               </div>
             </div>
         </div>
 
         <div class="col-md-3">
         <div class="card text-white mb-3 rounded-2" style="max-width: 18rem; background-color: #169cb2">
-          <div class="card-header">THIS YEAR <h5 class="float-end"><span class="badge bg-light rounded-2">235</span></h5> </div>
+          <div class="card-header">THIS YEAR <h5 class="float-end"><span class="badge bg-light rounded-2">{{ this_year.count }}</span></h5> </div>
           <div class="card-body">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16">
               <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
               <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
             </svg>
-            <p class="card-text">3423 BLR</p>
+            <p class="card-text">{{ this_year.amount }} {{ currency }}</p>
           </div>
         </div>
         </div>
@@ -87,13 +87,13 @@
     <div class="row mt-1">
         <div class="col">
             <div class="card rounded-2">
-                <canvas id="myChart" class="chart_expense"></canvas>
+                <canvas id="myChart" class="chart_expenses"></canvas>
             </div>
         </div>
 
         <div class="col">
             <div class="card rounded-2">
-                <canvas id="myChart2" class="chart_expense2"></canvas>
+                <canvas id="myChart2" class="chart_expenses"></canvas>
 
             </div>
         </div>

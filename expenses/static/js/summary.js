@@ -1,44 +1,60 @@
 const ctx = document.getElementById('myChart');
 const chr = document.getElementById('myChart2');
 
-const renderChart = (data_chart) =>{
-        const name = data_chart.nameChart
-        const category_data = data_chart.category_data;
-        const [labels, data] = [Object.keys(category_data), Object.values(category_data)];
-        ctx.style.height = '300px';
-        ctx.style.width = '200px';
+const renderChart = (data_json) =>{
+    const data_chrt = data_json.data_chart
+    const name = data_chrt.nameChart
+    const values = Object.values(data_chrt.all_data.months)
+    const letteredLabels = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sept",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    ctx.style.height = '500px';
+    ctx.style.width = '200px';
 
-        new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: `Last 6 month ${name}`,
-            data: data,
-            borderWidth: 1
-          }]
+    new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: letteredLabels,
+      datasets: [{
+        label: `This year ${name}`,
+        data: values,
+        borderWidth: 1
+      }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+        title: {
+            display: true,
+            text: `Year ${name}`,
         },
-        options: {
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                text: `${name} per category`,
-            },
-        }
-        });
+    }
+    }});
 }
 
 const getChartData=()=>{
     let url = '';
-    if(ctx.classList.contains('chart_expense'))
-        url = "/expenses/expenses_category_summary/";
-    else url = "/incomes/incomes_source_summary/";
+    if(ctx.classList.contains('chart_expenses'))
+        url = "/expenses/expenses-summary-rest/";
+    else url = "/incomes/incomes-summary-rest/";
     $.ajax({
            type: "GET",
            url: url,
-           success: (data_chart)=>{
-               renderChart(data_chart);
-               renderChart2(data_chart);
+           success: (data_json)=>{
+               console.log(data_json)
+               renderChart(data_json);
+               renderChart2(data_json);
            } ,
            dataType: 'json',
        });
@@ -47,19 +63,20 @@ const getChartData=()=>{
 window.onload =  getChartData;
 
 
-const renderChart2 = (data_chart)=> {
-    const name = data_chart.nameChart
-    const category_data = data_chart.category_data;
-    const [labels, data] = [Object.keys(category_data), Object.values(category_data)];
-    chr.style.height = '300px';
+const renderChart2 = (data_json)=> {
+    const data_chrt = data_json.data_chart
+    const name = data_chrt.nameChart
+    const values = Object.values(data_chrt.all_data.days)
+    const labels = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
+    chr.style.height = '500px';
     chr.style.width = '200px';
     new Chart(chr, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: `Last 6 month ${name}`,
-                data: data,
+                label: `This week ${name}`,
+                data: values,
                 borderWidth: 1,
                 backgroundColor: "#18BC9C",
                 borderColor: "#18BC9C",
@@ -67,10 +84,11 @@ const renderChart2 = (data_chart)=> {
         },
         options: {
             maintainAspectRatio: false,
+            plugins: {
             title: {
                 display: true,
-                text: `${name} per category`,
+                text: `Week ${name}`,
             },
         }
-    });
+    }});
 }

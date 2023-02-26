@@ -134,33 +134,89 @@ def search_expense(request):
 
 @login_required()
 def expenses_summary(request):
-    return render(request, template_name='expenses/expenses_summary.html')
+    if not UserPreference.objects.filter(user=request.user).exists():
+        messages.info(request, 'Please choose your preferred currency')
+        return redirect('preferences')
+
+    all_expenses = Expenses.objects.filter(owner=request.user)
+    today = datetime.datetime.today().date()
+    today_data = {'amount': 0, 'count': 0}
+    week_data = {'amount': 0, 'count': 0}
+    month_data = {'amount': 0, 'count': 0}
+    year_data = {'amount': 0, 'count': 0}
+    week_ago = today - datetime.timedelta(days=7)
+    month_ago = today - datetime.timedelta(days=30)
+    year_ago = today - datetime.timedelta(days=365)
+
+    for expense in all_expenses:
+        if expense.date == today:
+            today_data['amount'] += expense.amount
+            today_data['count'] += 1
+
+        if expense.date >= week_ago:
+            week_data['amount'] += expense.amount
+            week_data['count'] += 1
+
+        if expense.date >= month_ago:
+            month_data['amount'] += expense.amount
+            month_data['count'] += 1
+
+        if expense.date >= year_ago:
+            year_data['amount'] += expense.amount
+            year_data['count'] += 1
+
+    context = {
+        'currency': UserPreference.objects.get(user=request.user).currency.split('-')[0],
+        'today': today_data,
+        'this_week': week_data,
+        'this_month': month_data,
+        'this_year': year_data
+    }
+
+    return render(request, template_name='expenses/expenses_summary.html', context=context)
 
 
 @login_required()
-def expenses_category_summary(request):
-    today = datetime.datetime.today()
-    six_month_ago = today - datetime.timedelta(days=30*6)
-    expenses = Expenses.objects.filter(date__gte=six_month_ago, date__lte=today, owner=request.user)
+def expenses_summary_rest(request):
+    all_expenses = Expenses.objects.filter(owner=request.user)
+    today = datetime.datetime.today().date()
+    today_amount = 0
+    months_data = {}
+    week_days_data = {}
 
-    final_rep = {}
+    def get_amount_for_month(month):
+        month_amount = 0
+        for one in all_expenses:
+            month_, year = one.date.month, one.date.year
+            if month == month_ and year == today_year:
+                month_amount += one.amount
+        return month_amount
 
-    def get_category(exp):
-        return exp.category
+    for x in range(1, 13):
+        today_month, today_year = x, datetime.datetime.today().year
+        for one in all_expenses:
+            months_data[x] = get_amount_for_month(x)
 
-    def get_expense_category_amount(cat):
-        amount = 0
-        query_set = expenses.filter(category=cat)
-        for exp in query_set:
-            amount += exp.amount
-        return amount
+    def get_amount_for_day(x, today_day, month, today_year):
+        day_amount = 0
+        for one in all_expenses:
+            day_, date_, month_, year_ = one.date.isoweekday(
+            ), one.date.day, one.date.month, one.date.year
+            if x == day_ and month == month_ and year_ == today_year:
+                if not day_ > today_day:
+                    day_amount += one.amount
+        return day_amount
 
-    category_list = list(set(map(get_category, expenses)))
-    for expense in expenses:
-        for category in category_list:
-            final_rep[category] = get_expense_category_amount(category)
+    for x in range(1, 8):
+        today_day, today_month, today_year = datetime.datetime.today(
+        ).isoweekday(), datetime.datetime.today(
+        ).month, datetime.datetime.today().year
+        for one in all_expenses:
+            week_days_data[x] = get_amount_for_day(
+                x, today_day, today_month, today_year)
 
-    return JsonResponse({'category_data': final_rep, 'nameChart': 'Expenses'}, safe=False)
+    data = {"months": months_data, "days": week_days_data}
+    return JsonResponse({'data_chart': {'all_data': data, 'nameChart': 'Expenses'}}, safe=False)
 
 
 @login_required()
@@ -233,3 +289,93 @@ def export_pdf(request):
         response.write(output.read())
 
     return response
+
+
+@login_required()
+def last_3months_stats(request):
+    todays_date = datetime.date.today()
+    three_months_ago = datetime.date.today() - datetime.timedelta(days=90)
+    expenses = Expenses.objects.filter(owner=request.user,
+                                      date__gte=three_months_ago, date__lte=todays_date)
+
+    # categories occuring.
+    def get_categories(item):
+        return item.category
+    final = {}
+    categories = list(set(map(get_categories, expenses)))
+
+    def get_expense_count(y):
+        new = Expenses.objects.filter(category=y,)
+        count = new.count()
+        amount = 0
+        for y in new:
+            amount += y.amount
+        return {'count': count, 'amount': amount}
+
+    for x in expenses:
+        for y in categories:
+            final[y] = get_expense_count(y)
+    return JsonResponse({'category_data': final}, safe=False)
+
+
+@login_required()
+def last_3months_expense_source_stats(request):
+    todays_date = datetime.date.today()
+    last_month = datetime.date.today() - datetime.timedelta(days=0)
+    last_2_month = last_month - datetime.timedelta(days=30)
+    last_3_month = last_2_month - datetime.timedelta(days=30)
+
+    last_month_income = Expenses.objects.filter(owner=request.user,
+                                               date__gte=last_month, date__lte=todays_date).order_by('date')
+    prev_month_income = Expenses.objects.filter(owner=request.user,
+                                               date__gte=last_month, date__lte=last_2_month)
+    prev_prev_month_income = Expenses.objects.filter(owner=request.user,
+                                                    date__gte=last_2_month, date__lte=last_3_month)
+
+    keyed_data = []
+    this_month_data = {'7th': 0, '15th': 0, '22nd': 0, '29th': 0}
+    prev_month_data = {'7th': 0, '15th': 0, '22nd': 0, '29th': 0}
+    prev_prev_month_data = {'7th': 0, '15th': 0, '22nd': 0, '29th': 0}
+
+    for x in last_month_income:
+        month = str(x.date)[:7]
+        date_in_month = str(x.date)[:2]
+        if int(date_in_month) <= 7:
+            this_month_data['7th'] += x.amount
+        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+            this_month_data['15th'] += x.amount
+        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+            this_month_data['22nd'] += x.amount
+        if int(date_in_month) > 22 and int(date_in_month) < 31:
+            this_month_data['29th'] += x.amount
+
+    keyed_data.append({str(last_month): this_month_data})
+
+    for x in prev_month_income:
+        date_in_month = str(x.date)[:2]
+        month = str(x.date)[:7]
+        if int(date_in_month) <= 7:
+            prev_month_data['7th'] += x.amount
+        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+            prev_month_data['15th'] += x.amount
+        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+            prev_month_data['22nd'] += x.amount
+        if int(date_in_month) > 22 and int(date_in_month) < 31:
+            prev_month_data['29th'] += x.amount
+
+    keyed_data.append({str(last_2_month): prev_month_data})
+
+    for x in prev_prev_month_income:
+        date_in_month = str(x.date)[:2]
+        month = str(x.date)[:7]
+        if int(date_in_month) <= 7:
+            prev_prev_month_data['7th'] += x.amount
+        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+            prev_prev_month_data['15th'] += x.amount
+        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+            prev_prev_month_data['22nd'] += x.amount
+        if int(date_in_month) > 22 and int(date_in_month) < 31:
+            prev_prev_month_data['29th'] += x.amount
+
+    keyed_data.append({str(last_3_month): prev_month_data})
+    return JsonResponse({'cumulative_income_data': keyed_data}, safe=False)
