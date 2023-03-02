@@ -26,21 +26,16 @@
   <body>
 
 <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{% url 'expenses' %}">Money Expenses</a>
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{% url 'social:disconnect' 'google-oauth2'%}">Money Expenses</a>
   <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-{#    <div class="navbar-nav">#}
-{#        <div class="nav-item">#}
-{#    <span class="nav-link">Test</span>#}
-{#        </div>#}
-{#    </div>#}
-{#  <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">#}
+
   <div class="navbar-nav">
     <div class="nav-item">
         <form class="justify-content-end" action="{% url 'logout' %}" method="post">
             {% csrf_token %}
-            <span class="navbar-text col-lg-2 me-0 px-3 fs-6 text-nowrap" title="Username (email)">{{ user.username }} ({{ user.email }})</span>
+            <span class="navbar-text col-lg-2 me-0 px-3 fs-6 text-nowrap" title="Username (email)">{{ user.username }} {% if user.email %}({{ user.email }}) {% endif %}</span>
             <button class="navbar-brand me-0 px-3 fs-6 border-0" type="submit">Log out
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right ms-1" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>

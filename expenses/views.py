@@ -5,7 +5,6 @@ from .models import Category, Expenses
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponse
 from userpreferences.models import UserPreference
 from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.db.models import Q
 
@@ -104,7 +103,6 @@ def edit_expanses(request, id):
 @login_required()
 def delete_expenses(request, id):
     expense = Expenses.objects.get(pk=id)
-
     if request.user != expense.owner:
         return HttpResponseForbidden()
 
@@ -123,7 +121,7 @@ def search_expense(request):
                     Expenses.objects.filter(Q(description__icontains=data) & Q(owner=request.user)) | \
                     Expenses.objects.filter(Q(category__icontains=data) & Q(owner=request.user))
     else:
-        query_set = Expenses.objects.filter(owner=request.user)[:4]
+        query_set = Expenses.objects.filter(owner=request.user)
     context = {
         'user': request.user,
         'query_set': query_set,
@@ -134,7 +132,8 @@ def search_expense(request):
 
 @login_required()
 def expenses_summary(request):
-    if not UserPreference.objects.filter(user=request.user).exists():
+    currency = UserPreference.objects.get(user=request.user).currency
+    if not currency:
         messages.info(request, 'Please choose your preferred currency')
         return redirect('preferences')
 
@@ -298,14 +297,13 @@ def last_3months_stats(request):
     expenses = Expenses.objects.filter(owner=request.user,
                                       date__gte=three_months_ago, date__lte=todays_date)
 
-    # categories occuring.
     def get_categories(item):
         return item.category
     final = {}
     categories = list(set(map(get_categories, expenses)))
 
     def get_expense_count(y):
-        new = Expenses.objects.filter(category=y,)
+        new = Expenses.objects.filter(category=y, owner=request.user)
         count = new.count()
         amount = 0
         for y in new:
@@ -313,8 +311,8 @@ def last_3months_stats(request):
         return {'count': count, 'amount': amount}
 
     for x in expenses:
-        for y in categories:
-            final[y] = get_expense_count(y)
+        for cat in categories:
+            final[cat] = get_expense_count(cat)
     return JsonResponse({'category_data': final}, safe=False)
 
 
@@ -338,43 +336,40 @@ def last_3months_expense_source_stats(request):
     prev_prev_month_data = {'7th': 0, '15th': 0, '22nd': 0, '29th': 0}
 
     for x in last_month_income:
-        month = str(x.date)[:7]
         date_in_month = str(x.date)[:2]
         if int(date_in_month) <= 7:
             this_month_data['7th'] += x.amount
-        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+        if 7 < int(date_in_month) <= 15:
             this_month_data['15th'] += x.amount
-        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+        if 16 <= int(date_in_month) <= 21:
             this_month_data['22nd'] += x.amount
-        if int(date_in_month) > 22 and int(date_in_month) < 31:
+        if 22 < int(date_in_month) < 31:
             this_month_data['29th'] += x.amount
 
     keyed_data.append({str(last_month): this_month_data})
 
     for x in prev_month_income:
         date_in_month = str(x.date)[:2]
-        month = str(x.date)[:7]
         if int(date_in_month) <= 7:
             prev_month_data['7th'] += x.amount
-        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+        if 7 < int(date_in_month) <= 15:
             prev_month_data['15th'] += x.amount
-        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+        if 16 <= int(date_in_month) <= 21:
             prev_month_data['22nd'] += x.amount
-        if int(date_in_month) > 22 and int(date_in_month) < 31:
+        if 22 < int(date_in_month) < 31:
             prev_month_data['29th'] += x.amount
 
     keyed_data.append({str(last_2_month): prev_month_data})
 
     for x in prev_prev_month_income:
         date_in_month = str(x.date)[:2]
-        month = str(x.date)[:7]
         if int(date_in_month) <= 7:
             prev_prev_month_data['7th'] += x.amount
-        if int(date_in_month) > 7 and int(date_in_month) <= 15:
+        if 7 < int(date_in_month) <= 15:
             prev_prev_month_data['15th'] += x.amount
-        if int(date_in_month) >= 16 and int(date_in_month) <= 21:
+        if 16 <= int(date_in_month) <= 21:
             prev_prev_month_data['22nd'] += x.amount
-        if int(date_in_month) > 22 and int(date_in_month) < 31:
+        if 22 < int(date_in_month) < 31:
             prev_prev_month_data['29th'] += x.amount
 
     keyed_data.append({str(last_3_month): prev_month_data})

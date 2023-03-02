@@ -1,3 +1,4 @@
+import social_django.views
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 import json
@@ -17,6 +18,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import update_session_auth_hash
 
 from django.contrib import auth
+from social_django.models import UserSocialAuth
 
 
 class UsernameValidationView(View):
@@ -122,6 +124,18 @@ class LoginView(View):
 
 class LogoutView(View):
     def post(self, request):
+        user = request.user
+        try:
+            github_login = user.social_auth.get(provider='github')
+            print(github_login.user_id)
+        except UserSocialAuth.DoesNotExist:
+            github_login = None
+        try:
+            google_login = user.social_auth.get(provider='google-oauth2')
+            print(google_login.user_id)
+        except UserSocialAuth.DoesNotExist:
+            google_login = None
+
         auth.logout(request)
         messages.success(request, "You have been logged out.")
         return redirect('login')
@@ -139,7 +153,7 @@ class RequestResetPasswordView(View):
             messages.error(request, 'Please supply a valid email')
             return render(request, template_name='authentication/reset-password-link.html')
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.filter(email=email)[0]
             user.is_active = False
             user.profile.reset_password = True
             user.save()

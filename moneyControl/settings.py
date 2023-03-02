@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
 from pathlib import Path
+
+import social_core.pipeline.social_auth
 from django.urls import reverse_lazy
 from django.contrib.messages import constants as messages
 
@@ -42,8 +44,17 @@ INSTALLED_APPS = [
     'expenses',
     'authentication',
     'userpreferences',
-    'incomes'
+    'incomes',
+    'social_django',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
             ],
         },
     },
@@ -135,6 +147,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = reverse_lazy('login')
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('expenses')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -146,3 +159,15 @@ EMAIL_HOST_PASSWORD = 'xovskefgrmkzljpu'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_DISCONNECT_DISABLED = False
+
+SOCIAL_AUTH_GITHUB_KEY = '06194cb657d70b36ccb7'
+SOCIAL_AUTH_GITHUB_SECRET = '4d8c19855b91a6ca7c8eac0c480d669b5f5a4674'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '470048037869-iqml2ferfamm3bud0npepiou6kiaafrs.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+
+

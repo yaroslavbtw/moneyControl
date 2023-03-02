@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Output</title>
+    <style>
+        @page{
+            size: A4;
+            margin: 2.5cm 1.5cm 3.5cm 1.5cm;
+
+            @top-center {
+                content: "My Incomes";
+            }
+
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Incomes list</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>N</th>
+                <th>Amount</th>
+                <th>Source</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for income in incomes %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <th>{{ income.amount }}</th>
+                    <th>{{ income.source }}</th>
+                    <th>{{ income.description }}</th>
+                    <th>{{ income.date }}</th>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <th>Total</th>
+                    <th>{{ total }}</th>
+                </tr>
+        </tbody>
+    </table>
+</body>
+</html>

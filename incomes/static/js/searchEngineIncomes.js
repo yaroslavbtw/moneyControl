@@ -26,6 +26,7 @@ $(function (){
 
 function searchSuccess(data, textStatus, jqXHR)
 {
+    console.log(data)
     $('#incomesTable').html(data)
     if($('#searchField').val().length > 0)
     {
@@ -44,9 +45,5 @@ function searchSuccess(data, textStatus, jqXHR)
             if(item.classList.contains('disabled') && !arrayNav[num])
                 item.classList.remove('disabled')
         })
-    }
-    if(document.querySelectorAll('tr.element').length)
-    {
-
     }
 }

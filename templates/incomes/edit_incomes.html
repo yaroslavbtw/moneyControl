@@ -3,28 +3,6 @@
 {% block content %}
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content rounded-3">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete of income</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to delete this income?
-          </div>
-          <div class="modal-footer">
-              <form action="{% url 'delete-incomes' values.pk %}" method="post">
-                  {% csrf_token %}
-                    <button type="reset" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary rounded-3">Delete income</button>
-              </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container mt-4">
         <h2>Edit income</h2>
         <div class="row">
@@ -37,12 +15,6 @@
                 </nav>
             </div>
 
-            <div class="col-md-2 pt-2">
-                        <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger rounded-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                      Delete income
-                    </button>
-            </div>
         </div>
     </div>
 
