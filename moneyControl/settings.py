@@ -10,12 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
+import os
 from pathlib import Path
 
 import social_core.pipeline.social_auth
 from django.urls import reverse_lazy
 from django.contrib.messages import constants as messages
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p6)e*#*-8w)8x(8w(x5(d4)_djut!hwb&0(287-t@o_tz08%et'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,9 +97,9 @@ WSGI_APPLICATION = 'moneyControl.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'incomeexpensesdb',
-        'USER': 'postgres',
-        'PASSWORD': '12345678',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'localhost',
     }
 }
@@ -150,11 +153,11 @@ LOGIN_URL = reverse_lazy('login')
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('expenses')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'yaroslavantonov47@gmail.com'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_PASSWORD = 'xovskefgrmkzljpu'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
@@ -163,11 +166,11 @@ MESSAGE_TAGS = {
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_DISCONNECT_DISABLED = False
 
-SOCIAL_AUTH_GITHUB_KEY = '06194cb657d70b36ccb7'
-SOCIAL_AUTH_GITHUB_SECRET = '4d8c19855b91a6ca7c8eac0c480d669b5f5a4674'
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '470048037869-iqml2ferfamm3bud0npepiou6kiaafrs.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 
 
