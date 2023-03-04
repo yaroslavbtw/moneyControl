@@ -124,18 +124,6 @@ class LoginView(View):
 
 class LogoutView(View):
     def post(self, request):
-        user = request.user
-        try:
-            github_login = user.social_auth.get(provider='github')
-            print(github_login.user_id)
-        except UserSocialAuth.DoesNotExist:
-            github_login = None
-        try:
-            google_login = user.social_auth.get(provider='google-oauth2')
-            print(google_login.user_id)
-        except UserSocialAuth.DoesNotExist:
-            google_login = None
-
         auth.logout(request)
         messages.success(request, "You have been logged out.")
         return redirect('login')
