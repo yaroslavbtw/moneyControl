@@ -2,6 +2,7 @@ import social_django.views
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 import json
+import threading
 
 from validate_email import validate_email
 from django.http import HttpResponse
@@ -19,6 +20,8 @@ from django.contrib.auth import update_session_auth_hash
 
 from django.contrib import auth
 from social_django.models import UserSocialAuth
+from django.core.cache import cache
+from .tasks import send_email_task
 
 
 class UsernameValidationView(View):
@@ -55,7 +58,6 @@ class RegistrationView(View):
                 user = User.objects.create_user(username=username, email=email)
                 user.set_password(password)
                 user.is_active = False
-                user.save()
                 messages.add_message(request, messages.SUCCESS, "Your account registered!")
 
                 domain = get_current_site(request).domain
@@ -63,11 +65,17 @@ class RegistrationView(View):
                 link = reverse('activate', kwargs={'uuid64': uuid64, 'token': confirm_token_generator.make_token(user)})
                 activate_url = 'http://' + domain + link
 
-                send_mail('Django MoneyExpenses Registration',
-                          f'Hello, {username}, please follow this link to complete your registration\n' + activate_url,
-                          settings.EMAIL_HOST_USER,
-                          [email])
+                # send_mail('Django MoneyExpenses Registration',
+                #           f'Hello, {username}, please follow this link to complete your registration\n' + activate_url,
+                #           settings.EMAIL_HOST_USER,
+                #           [email])
 
+                result = send_email_task.delay('Django MoneyExpenses Registration',
+                                      f'Hello, {username}, '
+                                      f'please follow this link to complete your registration\n' + activate_url,
+                                      email)
+                print(result.get())
+                user.save()
                 return redirect('login')
             else:
                 messages.add_message(request, messages.ERROR, 'Account with this email registered already.')
@@ -155,10 +163,15 @@ class RequestResetPasswordView(View):
                                                                'token': reset_password_generator.make_token(user)})
             reset_url = 'http://' + domain + link
 
-            send_mail('Django MoneyExpenses Reset password',
-                      f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
-                      settings.EMAIL_HOST_USER,
-                      [email])
+            # send_mail('Django MoneyExpenses Reset password',
+            #           f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
+            #           settings.EMAIL_HOST_USER,
+            #           [email])
+
+            result = send_email_task.delay('Django MoneyExpenses Reset password',
+                                  f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
+                                  email)
+            print(result.get())
         except User.DoesNotExist:
             messages.error(request, 'User with this email does not exist')
             return render(request, template_name='authentication/reset-password-link.html')
