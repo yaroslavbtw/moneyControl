@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),

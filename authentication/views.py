@@ -1,27 +1,18 @@
-import social_django.views
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 import json
-import threading
-
 from validate_email import validate_email
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
 from .utils import confirm_token_generator, reset_password_generator
-
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import update_session_auth_hash
-
 from django.contrib import auth
-from social_django.models import UserSocialAuth
 from django.core.cache import cache
-from .tasks import send_email_task
+from .tasks import send_html_email_task
 
 
 class UsernameValidationView(View):
@@ -46,6 +37,7 @@ class EmailValidationView(View):
 
 
 class RegistrationView(View):
+
     def get(self, request):
         return render(request, template_name='authentication/register.html')
 
@@ -58,23 +50,23 @@ class RegistrationView(View):
                 user = User.objects.create_user(username=username, email=email)
                 user.set_password(password)
                 user.is_active = False
-                messages.add_message(request, messages.SUCCESS, "Your account registered!")
+                messages.add_message(request, messages.SUCCESS, "Your account registered! "
+                                                                "Check your email to confirm registration")
 
                 domain = get_current_site(request).domain
                 uuid64 = urlsafe_base64_encode(force_bytes(user.pk))
                 link = reverse('activate', kwargs={'uuid64': uuid64, 'token': confirm_token_generator.make_token(user)})
                 activate_url = 'http://' + domain + link
 
-                # send_mail('Django MoneyExpenses Registration',
-                #           f'Hello, {username}, please follow this link to complete your registration\n' + activate_url,
-                #           settings.EMAIL_HOST_USER,
-                #           [email])
+                html_content = render(request, 'partials/email_message.html',
+                                      {'username': user.username, 'title': 'Confirm Registration', 'text_part1':
+                                          'You have successfully registered on our website. '
+                                          'We are very happy to welcome you to our community.',
+                                       'text_part2': 'To complete your registration, please follow this link.',
+                                       'link': activate_url}).content.decode('utf-8')
 
-                result = send_email_task.delay('Django MoneyExpenses Registration',
-                                      f'Hello, {username}, '
-                                      f'please follow this link to complete your registration\n' + activate_url,
-                                      email)
-                print(result.get())
+                send_html_email_task.delay(subject='Money Control | Confirm Registration', to_emails=[email],
+                                           html_content=html_content)
                 user.save()
                 return redirect('login')
             else:
@@ -93,9 +85,6 @@ class VerificationView(View):
             if not confirm_token_generator.check_token(user, token):
                 return redirect('login' + '?message=Account already activated')
 
-            # if user.is_active:
-            #     return redirect('login')
-
             user.is_active = True
             user.save()
 
@@ -107,6 +96,7 @@ class VerificationView(View):
 
 
 class LoginView(View):
+
     def get(self, request):
         return render(request, template_name='authentication/login.html')
 
@@ -163,15 +153,14 @@ class RequestResetPasswordView(View):
                                                                'token': reset_password_generator.make_token(user)})
             reset_url = 'http://' + domain + link
 
-            # send_mail('Django MoneyExpenses Reset password',
-            #           f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
-            #           settings.EMAIL_HOST_USER,
-            #           [email])
+            html_content = render(request, 'partials/email_message.html',
+                                  {'username': user.username, 'title': 'Reset Password', 'text_part1':
+                                      ' You have successfully reset password of your account.', 'text_part2':
+                                      'To change your password, please follow this link.', 'link': reset_url})\
+                .content.decode('utf-8')
 
-            result = send_email_task.delay('Django MoneyExpenses Reset password',
-                                  f'Hello, {user.username}, please follow this link to reset password\n' + reset_url,
-                                  email)
-            print(result.get())
+            send_html_email_task.delay(subject='Money Control | Reset password', to_emails=[email],
+                                       html_content=html_content)
         except User.DoesNotExist:
             messages.error(request, 'User with this email does not exist')
             return render(request, template_name='authentication/reset-password-link.html')

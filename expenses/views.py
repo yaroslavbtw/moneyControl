@@ -313,6 +313,8 @@ def last_3months_stats(request):
     for x in expenses:
         for cat in categories:
             final[cat] = get_expense_count(cat)
+    if final == {}:
+        final['None'] = {'count': 1, 'amount': 1}
     return JsonResponse({'category_data': final}, safe=False)
 
 

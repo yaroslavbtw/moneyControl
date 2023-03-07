@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -74,6 +74,9 @@ SOCIAL_AUTH_DISCONNECT_PIPELINE = (
 
     # Removes the social associations.
     'social_core.pipeline.disconnect.disconnect',
+
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_auth.backends.pipeline.social.associate_user'
 )
 
 MIDDLEWARE = [
@@ -188,6 +191,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = reverse_lazy('login')
+LOGIN_ERROR_URL = reverse_lazy('login')
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('expenses')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -212,4 +216,3 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
-

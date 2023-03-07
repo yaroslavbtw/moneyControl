@@ -241,6 +241,8 @@ def last_3months_income_stats(request):
     for x in income:
         for source in sources:
             final[source] = get_sources_count(source)
+    if final == {}:
+        final['None'] = {'count': 1, 'amount': 1}
     return JsonResponse({'category_data': final}, safe=False)
 
 
